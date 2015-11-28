@@ -43,8 +43,17 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:layout_marginBottom="10dp"
         android:id="@+id/bRegister"
         android:text="Register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvLoginLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:text="Login Here"/>
 </LinearLayout>

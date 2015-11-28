@@ -3,14 +3,17 @@ package com.example.brandon.myfriendlocater;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-public class Register extends ActionBarActivity implements View.OnClickListener{
+public class Register extends AppCompatActivity implements View.OnClickListener{
 
     Button bRegister;
     EditText etName, etUsername, etPassword;
+    TextView tvLoginLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +24,10 @@ public class Register extends ActionBarActivity implements View.OnClickListener{
         etPassword = (EditText) findViewById(R.id.etPassword);
         etName = (EditText) findViewById(R.id.etName);
         bRegister = (Button) findViewById(R.id.bRegister);
+        tvLoginLink = (TextView) findViewById(R.id.tvLoginLink);
 
         bRegister.setOnClickListener(this);
+        tvLoginLink.setOnClickListener(this);
     }
 
     @Override
@@ -35,6 +40,9 @@ public class Register extends ActionBarActivity implements View.OnClickListener{
                 User user = new User(name, username, password);
 
                 registerUser(user);
+                break;
+            case R.id.tvLoginLink:
+                startActivity(new Intent(this, Login.class));
                 break;
         }
     }
