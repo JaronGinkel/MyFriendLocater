@@ -215,6 +215,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // Assign the new location
         mLastLocation = location;
 
+        double latitude = mLastLocation.getLatitude();
+        double longitude = mLastLocation.getLongitude();
+        User currentUser = userLocalStore.getLoggedInUser();
+        User updatedUser = new User(currentUser.name, currentUser.username, currentUser.password, new Double(latitude).toString(), new Double(longitude).toString());
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.storeLocationDataInBackground(updatedUser, new GetUserCallback() {
+            @Override
+            public void done(User returnedUser) {
+            }
+        });
+
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();
 

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class ServerRequests {
     ProgressDialog progressDialog;
     public static final int CONNECTION_TIMEOUT = 1000 * 15;
-    public static final String SERVER_ADDRESS = "http://playchesswithbrandon.net/";
+    public static final String SERVER_ADDRESS = "http://10.0.2.2:8888/";
 
     public ServerRequests(Context context){
         progressDialog = new ProgressDialog(context);
@@ -38,6 +38,11 @@ public class ServerRequests {
     public void storeUserDataInBackground(User user, GetUserCallback userCallback){
         progressDialog.show();
         new StoreUserDataAsyncTask(user, userCallback).execute();
+    }
+
+    public void storeLocationDataInBackground(User user, GetUserCallback userCallback){
+        progressDialog.show();
+        new StoreLocationDataAsyncTask(user, userCallback).execute();
     }
 
     public void fetchUserDataInBackground(User user, GetUserCallback callBack){
@@ -133,6 +138,49 @@ public class ServerRequests {
             progressDialog.dismiss();
             userCallback.done(returnedUser);
             super.onPostExecute(returnedUser);
+        }
+    }
+
+    public class StoreLocationDataAsyncTask extends AsyncTask<Void, Void, Void> {
+        User user;
+        GetUserCallback userCallback;
+
+        public StoreLocationDataAsyncTask(User user, GetUserCallback userCallback) {
+            this.user = user;
+            this.userCallback = userCallback;
+        }
+        @Override
+        protected Void doInBackground(Void... params){
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+            dataToSend.add(new BasicNameValuePair("lat", user.lat));
+            dataToSend.add(new BasicNameValuePair("lng", user.lng));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "UpdateUserLocation.php");
+            User returnedUser = null;
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                HttpResponse httpResponse = client.execute(post);
+
+                HttpEntity entity = httpResponse.getEntity();
+                String result = EntityUtils.toString(entity);
+                JSONObject jObject = new JSONObject(result);
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid){
+            progressDialog.dismiss();
+            userCallback.done(null);
+            super.onPostExecute(aVoid);
         }
     }
 
