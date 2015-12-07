@@ -15,6 +15,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+import java.util.jar.Attributes;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -41,6 +46,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMyLocationEnabled(true);
+
+        User currentUser = userLocalStore.getLoggedInUser();
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.fetchFriendLocationDataInBackground(currentUser, new GetUserCallback() {
+            @Override
+            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+                for(int i = 0; i < returnedLocations.size(); i++) {
+                    NameValuePair friendLocation = returnedLocations.get(i);
+                    LatLng friendLocationLatLng = new LatLng(Double.parseDouble(friendLocation.getName()), Double.parseDouble(friendLocation.getValue()));
+                    mMap.addMarker(new MarkerOptions().position(friendLocationLatLng).title(""));
+                }
+            }
+            @Override
+            public void done(User returnedUser) {
+
+            }
+        });
 
     }
 

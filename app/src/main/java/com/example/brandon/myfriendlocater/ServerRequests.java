@@ -16,9 +16,12 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Brandon on 11/21/2015.
@@ -48,6 +51,11 @@ public class ServerRequests {
     public void fetchUserDataInBackground(User user, GetUserCallback callBack){
         progressDialog.show();
         new fetchUserDataAsyncTask(user, callBack).execute();
+    }
+
+    public void fetchFriendLocationDataInBackground(User user, GetUserCallback callBack){
+        progressDialog.show();
+        new fetchFriendLocationDataAsyncTask(user, callBack).execute();
     }
 
     public class StoreUserDataAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -138,6 +146,56 @@ public class ServerRequests {
             progressDialog.dismiss();
             userCallback.done(returnedUser);
             super.onPostExecute(returnedUser);
+        }
+    }
+
+    public class fetchFriendLocationDataAsyncTask extends AsyncTask<Void, Void, ArrayList<NameValuePair>> {
+        User user;
+        GetUserCallback userCallback;
+
+        public fetchFriendLocationDataAsyncTask(User user, GetUserCallback userCallback) {
+            this.user = user;
+            this.userCallback = userCallback;
+        }
+        @Override
+        protected ArrayList<NameValuePair> doInBackground(Void... params){
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "GetFriendLocation.php");
+            ArrayList<NameValuePair> returnedLocations = new ArrayList<>();
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                HttpResponse httpResponse = client.execute(post);
+
+                HttpEntity entity = httpResponse.getEntity();
+                String result = EntityUtils.toString(entity);
+                JSONArray jArray = new JSONArray(result);
+
+                if(jArray.length()==0){
+                    returnedLocations = null;
+                }else{
+                    for (int i = 0; i < jArray.length(); i++ ) {
+                        JSONObject jObject = jArray.getJSONObject(i);
+                        returnedLocations.add(new BasicNameValuePair(jObject.getString("lat"), jObject.getString("lng")));
+                    }
+
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return returnedLocations;
+        }
+        @Override
+        protected void onPostExecute(ArrayList<NameValuePair> returnedLocations){
+            progressDialog.dismiss();
+            userCallback.doneLocationTask(returnedLocations);
+            super.onPostExecute(returnedLocations);
         }
     }
 

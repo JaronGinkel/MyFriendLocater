@@ -22,6 +22,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -222,6 +226,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         ServerRequests serverRequests = new ServerRequests(this);
         serverRequests.storeLocationDataInBackground(updatedUser, new GetUserCallback() {
             @Override
+            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+
+            }
             public void done(User returnedUser) {
             }
         });
