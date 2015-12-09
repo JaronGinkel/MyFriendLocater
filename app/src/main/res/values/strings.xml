@@ -7,9 +7,11 @@
     <string name="action_map">Map</string>
     <string name="action_main">Main</string>
     <string name="action_logout">Logout</string>
+    <string name="action_friends">Friends List</string>
 
     <string name="lbl_you_are_at">YOU ARE AT</string>
     <string name="btn_get_location">GET MY LOCATION</string>
     <string name="btn_start_location_updates">START LOCATION UPDATES</string>
     <string name="btn_stop_location_updates">STOP LOCATION UPDATES</string>
+    <string name="title_activity_friends_list">Friends List</string>
 </resources>

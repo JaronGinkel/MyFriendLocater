@@ -48,6 +48,16 @@ public class ServerRequests {
         new StoreLocationDataAsyncTask(user, userCallback).execute();
     }
 
+    public void storeFriendDataInBackground(User user, String friendName, GetUserCallback userCallback){
+        progressDialog.show();
+        new StoreFriendDataAsyncTask(user,friendName, userCallback).execute();
+    }
+
+    public void removeFriendDataInBackground(User user, String friendName, GetUserCallback userCallback){
+        progressDialog.show();
+        new RemoveFriendDataAsyncTask(user,friendName, userCallback).execute();
+    }
+
     public void fetchUserDataInBackground(User user, GetUserCallback callBack){
         progressDialog.show();
         new fetchUserDataAsyncTask(user, callBack).execute();
@@ -56,6 +66,11 @@ public class ServerRequests {
     public void fetchFriendLocationDataInBackground(User user, GetUserCallback callBack){
         progressDialog.show();
         new fetchFriendLocationDataAsyncTask(user, callBack).execute();
+    }
+
+    public void fetchUserFriendListDataInBackground(User user, GetFriendListCallback callBack){
+        progressDialog.show();
+        new fetchUserFriendListDataAsyncTask(user, callBack).execute();
     }
 
     public class StoreUserDataAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -149,6 +164,57 @@ public class ServerRequests {
         }
     }
 
+    public class fetchUserFriendListDataAsyncTask extends AsyncTask<Void, Void, ArrayList<String>> {
+        User user;
+        GetFriendListCallback friendListCallback;
+
+        public fetchUserFriendListDataAsyncTask(User user, GetFriendListCallback friendListCallback) {
+            this.user = user;
+            this.friendListCallback = friendListCallback;
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... params) {
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "GetFriendList.php");
+            ArrayList<String> returnedFriendList = new ArrayList<>();
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                HttpResponse httpResponse = client.execute(post);
+
+                HttpEntity entity = httpResponse.getEntity();
+                String result = EntityUtils.toString(entity);
+                JSONArray jArray = new JSONArray(result);
+
+                if(jArray.length()==0){
+                    returnedFriendList = null;
+                }else{
+                    for (int i = 0; i < jArray.length(); i++ ) {
+                        JSONObject jObject = jArray.getJSONObject(i);
+                        returnedFriendList.add(jObject.getString("username"));
+                    }
+
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return returnedFriendList;
+        }
+        @Override
+        protected void onPostExecute(ArrayList<String> returnedFriendList){
+            progressDialog.dismiss();
+            friendListCallback.doneFriendListTask(returnedFriendList);
+            super.onPostExecute(returnedFriendList);
+        }
+    }
+
     public class fetchFriendLocationDataAsyncTask extends AsyncTask<Void, Void, ArrayList<NameValuePair>> {
         User user;
         GetUserCallback userCallback;
@@ -198,7 +264,43 @@ public class ServerRequests {
             super.onPostExecute(returnedLocations);
         }
     }
+    public class StoreFriendDataAsyncTask extends AsyncTask<Void, Void, Void> {
+        User user;
+        GetUserCallback userCallback;
+        String friendName;
+        public StoreFriendDataAsyncTask(User user, String friendName, GetUserCallback userCallback) {
+            this.user = user;
+            this.userCallback = userCallback;
+            this.friendName = friendName;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+            dataToSend.add(new BasicNameValuePair("friendname", friendName));
 
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "UpdateFriendName.php");
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                client.execute(post);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            progressDialog.dismiss();
+            userCallback.done(null);
+            super.onPostExecute(aVoid);
+        }
+    }
     public class StoreLocationDataAsyncTask extends AsyncTask<Void, Void, Void> {
         User user;
         GetUserCallback userCallback;
@@ -236,6 +338,44 @@ public class ServerRequests {
         }
         @Override
         protected void onPostExecute(Void aVoid){
+            progressDialog.dismiss();
+            userCallback.done(null);
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    public class RemoveFriendDataAsyncTask extends AsyncTask<Void, Void, Void> {
+        User user;
+        GetUserCallback userCallback;
+        String friendName;
+        public RemoveFriendDataAsyncTask(User user, String friendName, GetUserCallback userCallback) {
+            this.user = user;
+            this.userCallback = userCallback;
+            this.friendName = friendName;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+            dataToSend.add(new BasicNameValuePair("friendname", friendName));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "DeleteFriendName.php");
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                client.execute(post);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
             progressDialog.dismiss();
             userCallback.done(null);
             super.onPostExecute(aVoid);

@@ -42,6 +42,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
             case R.id.bLogin:
                 String username = etUsername.getText().toString();
                 String password = etUsername.getText().toString();
+
                 User user = new User(username, password);
 
                 authenticate(user);

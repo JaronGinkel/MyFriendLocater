@@ -152,6 +152,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 break;
             case R.id.action_main:
                 return true;
+            case R.id.action_friends:
+                startActivity(new Intent(this, FriendsListActivity.class));
+                break;
             case R.id.action_logout:
                 userLocalStore.clearUserData();
                 userLocalStore.setUserLoggedIn(false);

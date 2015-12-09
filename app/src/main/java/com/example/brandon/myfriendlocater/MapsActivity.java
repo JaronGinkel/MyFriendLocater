@@ -42,9 +42,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMyLocationEnabled(true);
 
         User currentUser = userLocalStore.getLoggedInUser();
@@ -52,12 +52,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         serverRequests.fetchFriendLocationDataInBackground(currentUser, new GetUserCallback() {
             @Override
             public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
-                for(int i = 0; i < returnedLocations.size(); i++) {
+                for (int i = 0; i < returnedLocations.size(); i++) {
                     NameValuePair friendLocation = returnedLocations.get(i);
+
                     LatLng friendLocationLatLng = new LatLng(Double.parseDouble(friendLocation.getName()), Double.parseDouble(friendLocation.getValue()));
                     mMap.addMarker(new MarkerOptions().position(friendLocationLatLng).title(""));
                 }
             }
+
             @Override
             public void done(User returnedUser) {
 
@@ -86,6 +88,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.action_main:
                 startActivity(new Intent(this, MainActivity.class));
+                break;
+            case R.id.action_friends:
+                startActivity(new Intent(this, FriendsListActivity.class));
                 break;
             case R.id.action_logout:
                 userLocalStore.clearUserData();
