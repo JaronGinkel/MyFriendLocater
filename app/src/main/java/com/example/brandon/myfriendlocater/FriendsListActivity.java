@@ -113,7 +113,7 @@ public class FriendsListActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     @Override
-                    public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+                    public void doneLocationTask(ArrayList<Marker> returnedLocations) {
 
                     }
                 });
@@ -123,7 +123,7 @@ public class FriendsListActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.bRemoveFriend:
 
-                if(selectedFriend != null)
+                if(selectedFriend != "")
                 {
                     currentUser = userLocalStore.getLoggedInUser();
                     serverRequests = new ServerRequests(this);
@@ -135,11 +135,12 @@ public class FriendsListActivity extends AppCompatActivity implements View.OnCli
                         }
 
                         @Override
-                        public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+                        public void doneLocationTask(ArrayList<Marker> returnedLocations) {
 
                         }
                     });
                     Toast.makeText(FriendsListActivity.this, "Friend Removed", Toast.LENGTH_SHORT).show();
+                    selectedFriend = "";
                 }
 
                 break;
