@@ -22,6 +22,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -142,12 +146,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         switch(item.getItemId()){
             case R.id.action_settings:
                 return true;
-
+            case R.id.action_events:
+                startActivity(new Intent(this, EventActivity.class));
+                break;
             case R.id.action_map:
                 startActivity(new Intent(this, MapsActivity.class));
                 break;
             case R.id.action_main:
                 return true;
+            case R.id.action_friends:
+                startActivity(new Intent(this, FriendsListActivity.class));
+                break;
             case R.id.action_logout:
                 userLocalStore.clearUserData();
                 userLocalStore.setUserLoggedIn(false);
@@ -214,6 +223,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onLocationChanged(Location location) {
         // Assign the new location
         mLastLocation = location;
+
+        double latitude = mLastLocation.getLatitude();
+        double longitude = mLastLocation.getLongitude();
+        User currentUser = userLocalStore.getLoggedInUser();
+        User updatedUser = new User(currentUser.name, currentUser.username, currentUser.password, new Double(latitude).toString(), new Double(longitude).toString());
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.storeLocationDataInBackground(updatedUser, new GetUserCallback() {
+            @Override
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
+
+            }
+            public void done(User returnedUser) {
+            }
+        });
 
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();

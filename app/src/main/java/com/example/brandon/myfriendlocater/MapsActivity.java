@@ -12,8 +12,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+import java.util.jar.Attributes;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -37,11 +43,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMyLocationEnabled(true);
 
+        User currentUser = userLocalStore.getLoggedInUser();
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.fetchFriendLocationDataInBackground(currentUser, new GetUserCallback() {
+            @Override
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
+                for(int i = 0; i < returnedLocations.size(); i++) {
+                    Marker friendLocation = returnedLocations.get(i);
+                    LatLng friendLocationLatLng = new LatLng(Double.parseDouble(friendLocation.lng), Double.parseDouble(friendLocation.lat));
+                    mMap.addMarker(new MarkerOptions().position(friendLocationLatLng).title(friendLocation.username));
+
+                }
+            }
+
+            @Override
+            public void done(User returnedUser) {
+
+            }
+        });
+
+        mMap.addMarker(new MarkerOptions().position(new LatLng(45, -45)).title("Tom's Birthday, 10/24/15, 5:00PM").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     @Override
@@ -59,11 +85,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch(item.getItemId()){
             case R.id.action_settings:
                 return true;
-
+            case R.id.action_events:
+                startActivity(new Intent(this, EventActivity.class));
+                break;
             case R.id.action_map:
                 return true;
             case R.id.action_main:
                 startActivity(new Intent(this, MainActivity.class));
+                break;
+            case R.id.action_friends:
+                startActivity(new Intent(this, FriendsListActivity.class));
                 break;
             case R.id.action_logout:
                 userLocalStore.clearUserData();

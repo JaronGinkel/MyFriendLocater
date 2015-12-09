@@ -9,6 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+
 public class Register extends AppCompatActivity implements View.OnClickListener{
 
     Button bRegister;
@@ -52,6 +56,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void done(User returnedUser) {
                 startActivity(new Intent(Register.this, Login.class));
+            }
+            @Override
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
+
             }
         });
     }
