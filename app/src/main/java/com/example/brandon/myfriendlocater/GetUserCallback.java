@@ -9,5 +9,5 @@ import java.util.ArrayList;
  */
 interface GetUserCallback {
     public abstract void done(User returnedUser);
-    public abstract void doneLocationTask(ArrayList<NameValuePair> returnedLocations);
+    public abstract void doneLocationTask(ArrayList<Marker> returnedLocations);
 }

@@ -149,7 +149,7 @@ public class ServerRequests {
         }
     }
 
-    public class fetchFriendLocationDataAsyncTask extends AsyncTask<Void, Void, ArrayList<NameValuePair>> {
+    public class fetchFriendLocationDataAsyncTask extends AsyncTask<Void, Void, ArrayList<Marker>> {
         User user;
         GetUserCallback userCallback;
 
@@ -158,7 +158,7 @@ public class ServerRequests {
             this.userCallback = userCallback;
         }
         @Override
-        protected ArrayList<NameValuePair> doInBackground(Void... params){
+        protected ArrayList<Marker> doInBackground(Void... params){
             ArrayList<NameValuePair> dataToSend = new ArrayList<>();
             dataToSend.add(new BasicNameValuePair("username", user.username));
 
@@ -168,7 +168,7 @@ public class ServerRequests {
 
             HttpClient client = new DefaultHttpClient(httpRequestParams);
             HttpPost post = new HttpPost(SERVER_ADDRESS + "GetFriendLocation.php");
-            ArrayList<NameValuePair> returnedLocations = new ArrayList<>();
+            ArrayList<Marker> returnedLocations = new ArrayList<>();
             try{
                 post.setEntity(new UrlEncodedFormEntity(dataToSend));
                 HttpResponse httpResponse = client.execute(post);
@@ -182,7 +182,7 @@ public class ServerRequests {
                 }else{
                     for (int i = 0; i < jArray.length(); i++ ) {
                         JSONObject jObject = jArray.getJSONObject(i);
-                        returnedLocations.add(new BasicNameValuePair(jObject.getString("lat"), jObject.getString("lng")));
+                        returnedLocations.add(new Marker(jObject.getString("username"), jObject.getString("lat"), jObject.getString("lng")));
                     }
 
                 }
@@ -192,7 +192,7 @@ public class ServerRequests {
             return returnedLocations;
         }
         @Override
-        protected void onPostExecute(ArrayList<NameValuePair> returnedLocations){
+        protected void onPostExecute(ArrayList<Marker> returnedLocations){
             progressDialog.dismiss();
             userCallback.doneLocationTask(returnedLocations);
             super.onPostExecute(returnedLocations);

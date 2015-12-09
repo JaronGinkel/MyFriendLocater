@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 }
             }
             @Override
-            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
 
             }
         });

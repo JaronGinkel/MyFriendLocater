@@ -51,11 +51,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ServerRequests serverRequests = new ServerRequests(this);
         serverRequests.fetchFriendLocationDataInBackground(currentUser, new GetUserCallback() {
             @Override
-            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
                 for(int i = 0; i < returnedLocations.size(); i++) {
-                    NameValuePair friendLocation = returnedLocations.get(i);
-                    LatLng friendLocationLatLng = new LatLng(Double.parseDouble(friendLocation.getName()), Double.parseDouble(friendLocation.getValue()));
-                    mMap.addMarker(new MarkerOptions().position(friendLocationLatLng).title(""));
+                    Marker friendLocation = returnedLocations.get(i);
+                    LatLng friendLocationLatLng = new LatLng(Double.parseDouble(friendLocation.lng), Double.parseDouble(friendLocation.lat));
+                    mMap.addMarker(new MarkerOptions().position(friendLocationLatLng).title(friendLocation.username));
                 }
             }
             @Override

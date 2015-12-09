@@ -58,7 +58,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener{
                 startActivity(new Intent(Register.this, Login.class));
             }
             @Override
-            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
 
             }
         });
