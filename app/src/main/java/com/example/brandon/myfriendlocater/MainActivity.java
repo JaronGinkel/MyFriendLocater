@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         ServerRequests serverRequests = new ServerRequests(this);
         serverRequests.storeLocationDataInBackground(updatedUser, new GetUserCallback() {
             @Override
-            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+            public void doneLocationTask(ArrayList<Marker> returnedLocations) {
 
             }
             public void done(User returnedUser) {
