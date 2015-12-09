@@ -146,7 +146,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         switch(item.getItemId()){
             case R.id.action_settings:
                 return true;
-
+            case R.id.action_events:
+                startActivity(new Intent(this, EventActivity.class));
+                break;
             case R.id.action_map:
                 startActivity(new Intent(this, MapsActivity.class));
                 break;

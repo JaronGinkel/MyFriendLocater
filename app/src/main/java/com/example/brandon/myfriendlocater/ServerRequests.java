@@ -43,6 +43,11 @@ public class ServerRequests {
         new StoreUserDataAsyncTask(user, userCallback).execute();
     }
 
+    public void storeEventDataInBackground(User user, String title, String date, String time, String lat, String lng, GetUserCallback userCallback){
+        progressDialog.show();
+        new StoreEventDataAsyncTask(user, title, date, time, lat, lng, userCallback).execute();
+    }
+
     public void storeLocationDataInBackground(User user, GetUserCallback userCallback){
         progressDialog.show();
         new StoreLocationDataAsyncTask(user, userCallback).execute();
@@ -289,6 +294,51 @@ public class ServerRequests {
 
             HttpClient client = new DefaultHttpClient(httpRequestParams);
             HttpPost post = new HttpPost(SERVER_ADDRESS + "UpdateFriendName.php");
+            try{
+                post.setEntity(new UrlEncodedFormEntity(dataToSend));
+                client.execute(post);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            progressDialog.dismiss();
+            userCallback.done(null);
+            super.onPostExecute(aVoid);
+        }
+    }
+    public class StoreEventDataAsyncTask extends AsyncTask<Void, Void, Void> {
+        User user;
+        GetUserCallback userCallback;
+        String title, date, time, lat, lng;
+        public StoreEventDataAsyncTask(User user, String title, String date, String time, String lat, String lng, GetUserCallback userCallback) {
+            this.user = user;
+            this.title = title;
+            this.date = date;
+            this.time = time;
+            this.lat = lat;
+            this.lng = lng;
+            this.userCallback = userCallback;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> dataToSend = new ArrayList<>();
+            dataToSend.add(new BasicNameValuePair("username", user.username));
+            dataToSend.add(new BasicNameValuePair("lat", lat));
+            dataToSend.add(new BasicNameValuePair("lng", lng));
+            dataToSend.add(new BasicNameValuePair("title", title));
+            dataToSend.add(new BasicNameValuePair("date", date));
+            dataToSend.add(new BasicNameValuePair("time", time));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "InsertEvent.php");
             try{
                 post.setEntity(new UrlEncodedFormEntity(dataToSend));
                 client.execute(post);

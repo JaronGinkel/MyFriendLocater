@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -66,6 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        mMap.addMarker(new MarkerOptions().position(new LatLng(45, -45)).title("Tom's Birthday, 10/24/15, 5:00PM").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     @Override
@@ -83,7 +85,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch(item.getItemId()){
             case R.id.action_settings:
                 return true;
-
+            case R.id.action_events:
+                startActivity(new Intent(this, EventActivity.class));
+                break;
             case R.id.action_map:
                 return true;
             case R.id.action_main:
