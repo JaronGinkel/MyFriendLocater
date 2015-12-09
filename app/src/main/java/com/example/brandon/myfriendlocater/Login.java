@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+
 public class Login extends AppCompatActivity implements View.OnClickListener{
 
     Button bLogin;
@@ -62,6 +66,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 }else{
                     logUserIn(returnedUser);
                 }
+            }
+            @Override
+            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+
             }
         });
     }

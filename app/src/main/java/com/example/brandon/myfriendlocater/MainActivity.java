@@ -22,6 +22,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
 
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -214,6 +218,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onLocationChanged(Location location) {
         // Assign the new location
         mLastLocation = location;
+
+        double latitude = mLastLocation.getLatitude();
+        double longitude = mLastLocation.getLongitude();
+        User currentUser = userLocalStore.getLoggedInUser();
+        User updatedUser = new User(currentUser.name, currentUser.username, currentUser.password, new Double(latitude).toString(), new Double(longitude).toString());
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.storeLocationDataInBackground(updatedUser, new GetUserCallback() {
+            @Override
+            public void doneLocationTask(ArrayList<NameValuePair> returnedLocations) {
+
+            }
+            public void done(User returnedUser) {
+            }
+        });
 
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();
